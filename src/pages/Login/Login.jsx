@@ -16,7 +16,7 @@ class NormalLoginForm extends Component {
       if (!err) {
         const result = await reqLogin(user_username, user_password)
         console.log(result)
-        if (result.flag) { // 登录成功
+        if (result.flag && result.role_id !== 0) { // 登录成功
           // 存放到本地存储中
           localStorageUtil.set(result.t_user)
           // 将登陆的结果存放到内存工具函数中一份
@@ -25,7 +25,7 @@ class NormalLoginForm extends Component {
           // 跳转路由
           this.props.history.replace('/')
         } else {  // 登录失败
-          message.error(result.msg)
+          message.error(result.msg || '用户权限不足，请联系管理员')
         }
       }
     });

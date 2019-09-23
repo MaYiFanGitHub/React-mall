@@ -95,6 +95,7 @@ export default class Category extends Component {
   }
   componentWillMount() {
     this.columns = [
+      
       {
         title: '分类名称',
         dataIndex: 'type_name',
@@ -106,13 +107,11 @@ export default class Category extends Component {
         render: (category) => (
           <div>
             <Button
-              type="primary"
-              shape="circle"
+              type="link"
               icon="edit"
               onClick={() => this.showUpdate(category)}
               style={{ marginRight: 10 }}
-            />
-            <Button type="danger" shape="circle" icon="delete" />
+            >修改分类</Button>
           </div>
         )
       }

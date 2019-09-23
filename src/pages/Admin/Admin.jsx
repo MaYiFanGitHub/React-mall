@@ -8,18 +8,24 @@ import MenuNav from '../../components/MenuNav/MenuNav'
 import AdminHeader from '../../components/Header/Header'
 import Home from '../Home/Home'
 import Category from '../Category/Category'
+import Product from '../Product/Product'
+import AdminUser from '../AdminUser/AdminUser'
 
 const { Footer, Sider, Content } = Layout;
 
 
 export default class Admin extends Component {
-  render() {
+
+  componentWillMount() {
     // 读取本地存储中的数据
     const userInfo = localStorageUtil.get()
-    // 无法在render中使用 this.props.history.replace 方法，只能通过渲染 Redirect 标签来进行自动跳转
+    // 如果用户不存在就跳转到登录页面
     if (!userInfo.user_id) {
-      return <Redirect to="/login"></Redirect>
+      this.props.history.replace('/login')
     }
+  }
+  render() {
+
     return (
       <Layout className="admin">
         <Sider>
@@ -31,6 +37,8 @@ export default class Admin extends Component {
             <Switch>
               <Route path="/home" component={Home}></Route>
               <Route path="/category" component={Category}></Route>
+              <Route path="/product" component={Product}></Route>
+              <Route path="/manager" component={AdminUser}></Route>
               <Redirect to="/home"></Redirect>
             </Switch>
           </Content>

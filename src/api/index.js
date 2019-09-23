@@ -37,3 +37,20 @@ export const reqDeleteCategory = (type_id) => ajax.get('/delete_type', {
     type_id
   }
 })
+
+// 获取管理员用户列表
+export const reqAdminUsers = (pageid, user_username, user_phone, role_id) => ajax.get(
+  '/select_user', {
+    params: {
+      pageid,
+      user_username,
+      user_phone,
+      role_id
+    }
+  }
+)
+
+/* 
+  删除用户
+*/
+export const reqDeleteUser = (user_id) => ajax.get('/delete_user', { params: { user_id }})
