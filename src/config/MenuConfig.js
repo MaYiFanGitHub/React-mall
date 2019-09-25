@@ -48,10 +48,6 @@ const menuConfig = [{
       key: "/loop",
       icon: "home",
       title: "轮播图管理"
-    }, {
-      key: "/service",
-      icon: "home",
-      title: "平台服务"
     }]
   }
 ]

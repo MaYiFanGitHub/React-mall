@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <form action="" id="form">
+    <input type="text" name="id" id="">
+    <input type="file" name="picture" id="" class="picture">
+    <input type="file" name="picture" id="" class="picture">
+    <input type="file" name="picture" id="" class="picture">
+    <input type="file" name="picture" id="" class="picture">
+
+    <!-- <input type="button" value="添加" id="btn"> -->
+    
+  </form>
+  <br>
+  <div>
+    <form>
+      <input type="file" id="file-input" name="fileContent">
+    </form>
+  </div>
+
+  <div id="test"></div>
+  <script>
+    let btn = document.getElementById('btn')
+    let form = document.getElementById('form')
+
+    /* 
+       var filereader = new FileReader();
+       var fileType = this.files[0].type;
+       filereader.onload = function(){
+         if(/^image\[jpeg|png|gif]/.test(fileType)){
+           console.log(this.result);
+         }
+       }
+       console.log(this.files[0]);
+       filereader.readAsDataURL(this.files[0]);
+    */
+    btn.onclick = function () {
+      let pictures = document.getElementsByClassName('picture')
+      var formData = new FormData(form);
+      console.log(formData)
+    }
+
+    /* 
+    
+      fileInput.onchange = function(){
+        console.log('文件名:',this.value)
+        var formData = new FormData(this.form);
+        console.log(formData)
+      }
+    */
+
+    var fileInput = document.querySelector('#file-input');
+    fileInput.onchange = function () {
+      var filereader = new FileReader();
+      var fileType = this.files[0].type;
+      filereader.onload = function () {
+        if (/^image\[jpeg|png|gif]/.test(fileType)) {
+          let img = document.createElement('img')
+          img.src= this.result
+          test.appendChild(img)
+        }
+      }
+      console.log(this.files[0]);
+      filereader.readAsDataURL(this.files[0]);
+    }
+    console.dir(fileInput);
+  </script>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Menu, Icon } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 
 import logo from '../../assets/images/logo.png'
 import './MenuNav.less'
@@ -8,11 +8,14 @@ import menuList from '../../config/MenuConfig'
 
 const { SubMenu, Item } = Menu;
 
-export default class MenuNav extends Component {
+class MenuNav extends Component {
   /* 
     渲染菜单列表
   */
   getMenuNodes = (menuList) => {
+
+    const openKey = this.props.location.pathname
+
     return menuList.map(menu => {
       if (!menu.children) {
         return (
@@ -24,6 +27,9 @@ export default class MenuNav extends Component {
           </Item>
         )
       } else {
+        if (menu.children.some(item => openKey === item.key)) {
+          this.openKey = menu.key
+        }
         return (
           <SubMenu
             key={menu.key}
@@ -44,6 +50,8 @@ export default class MenuNav extends Component {
     this.menuList = this.getMenuNodes(menuList)
   }
   render() {
+    const openKey = this.openKey
+    const SelectedKey = this.props.location.pathname
     return (
       <div className="menu-nav">
         <div className="logo">
@@ -53,6 +61,8 @@ export default class MenuNav extends Component {
         <Menu
           mode="inline"
           theme="dark"
+          selectedKeys={[SelectedKey]}
+          defaultOpenKeys={[openKey]}
         >
           {this.menuList}
         </Menu>
@@ -60,3 +70,6 @@ export default class MenuNav extends Component {
     )
   }
 }
+
+
+export default withRouter(MenuNav)

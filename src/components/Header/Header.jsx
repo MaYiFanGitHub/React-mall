@@ -14,6 +14,25 @@ class Header extends Component {
   state = {
     currentTime: dateFormat(Date.now())
   }
+
+  // 根据请求的path得到对应的标题
+  getTitle = () => {
+    let title = '';
+    const pathname = this.props.location.pathname;
+    MenuList.forEach(item => {
+      if (item.key === pathname) {
+        title = item.title
+      } else if (item.children) {
+        const menu = item.children.find(menu => pathname === menu.key)
+        // 判断是否有当前菜单
+        if (menu) {
+          title = menu.title
+        }
+      }
+    })
+
+    return title
+  }
   // 用户退出
   logout = () => {
     confirm({
@@ -51,6 +70,7 @@ class Header extends Component {
 
   render() {
     const { currentTime } = this.state
+    const title = this.getTitle()
     return (
       <div className="header">
         <div className="header-top">
@@ -59,12 +79,10 @@ class Header extends Component {
         </div>
         <div className="header-bottom">
           <div className="header-bottom-left">
-            <h2>首页</h2>
+            <h2>{title}</h2>
           </div>
           <div className="header-bottom-right">
             <span>{currentTime}</span>
-            <img src="http://api.map.baidu.com/images/weather/day/qing.png" alt="weather" />
-            <span>晴</span>
           </div>
         </div>
       </div>

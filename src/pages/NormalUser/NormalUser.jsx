@@ -22,7 +22,7 @@ export default class AdminUser extends Component {
 
   // 获取用户列表
   getAdminUsers = async (pageNum = 1, username = '', phone = '') => {
-    const result = await reqAdminUsers(pageNum, username, phone, 1)
+    const result = await reqAdminUsers(pageNum, username, phone, 0)
     if (result.flag) {
       this.setState({
         adminUsers: result.userlist,
@@ -107,7 +107,7 @@ export default class AdminUser extends Component {
       {
         title: '身份',
         dataIndex: 'role_id',
-        render: (role_id) => role_id === 1 ? '管理员' : '超级管理员'
+        render: (role_id) => '普通用户'
       },
       {
         title: '注册日期',
@@ -117,18 +117,14 @@ export default class AdminUser extends Component {
       {
         title: '操作',
         render: (user) => {
-          if (this.userInfo.role_id === 1) {
-            return '无操作权限'
-          } else {
-            return (
-              <Button
-                type="danger"
-                shape="circle"
-                icon="delete"
-                onClick={() => this.deleteUser(user.user_id, user.user_nickname)}
-              />
-            )
-          }
+          return (
+            <Button
+              type="danger"
+              shape="circle"
+              icon="delete"
+              onClick={() => this.deleteUser(user.user_id, user.user_nickname)}
+            />
+          )
         }
       }
     ]
@@ -150,7 +146,7 @@ export default class AdminUser extends Component {
     // 读取state中的数据
     const { adminUsers, loading, pageSize, userCount, username, phone, isSearch, currentPage } = this.state
 
-    const addBtn = this.userInfo.role_id === 1 ? '' : <Button icon="plus" type="primary" onClick={() => this.props.history.push('/manager/add')}>添加</Button>
+    const addBtn = <Button icon="plus" type="primary" onClick={() => this.props.history.push('/normal/add')}>添加</Button>
     const selectCondition = (
       <Form
         layout="inline"

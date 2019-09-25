@@ -1,62 +1,78 @@
 import React, { Component } from 'react'
-import { Card, Button, Input, Select, Table, Form, Modal } from 'antd'
+import { Card, Button, Input, Select, Table, Form, Modal, message } from 'antd'
 
-import { reqCategories } from '../../api'
+import { reqProducts, reqDeleteProduct } from '../../api'
+import { dateFormat } from '../../utils/DateUtil'
 import './ProductHome.less'
 
 const { Option } = Select
 const { Item } = Form
 
-const Base_Url = 'http://172.28.15.236:8080/mi_mall';
+const Base_Url = 'http://172.28.173.62:8080/mi_mall/';
 
-export default class Product extends Component {
+class Product extends Component {
   state = {
     // 商品列表
-    products: [
-      {
-        "commodity_id": "b6f10904-cc56-4f96-ab6f-9a325ad4c1d2",
-        "commodity_name": "小米9se",
-        "commodity_description": "战斗天使",
-        "commodity_date": "2019-09-20T00:00:00.000+0000",
-        "type_id": 1,
-        "commodity_size": null,
-        "commodity_picturelist": []
-      },
-      {
-        "commodity_id": "d9cace95-5b1f-465e-a1df-a86cd897dc2b",
-        "commodity_name": "小米9",
-        "commodity_description": "战斗天使",
-        "commodity_date": "2019-09-19T00:00:00.000+0000",
-        "type_id": 1,
-        "commodity_size": null,
-        "commodity_picturelist": [
-          {
-            "picture_id": "12536a29-aecd-484c-a8fa-04cd1e75c8ad",
-            "commodity_id": null,
-            "picture_url": "Uploads/1569033010996.jpeg"
-          },
-          {
-            "picture_id": "12536a29-aecd-484c-a8fa-04cd1e75c8ad",
-            "commodity_id": null,
-            "picture_url": "Uploads/1569033010996.jpeg"
-          },
-          {
-            "picture_id": "12536a29-aecd-484c-a8fa-04cd1e75c8ad",
-            "commodity_id": null,
-            "picture_url": "Uploads/1569033010996.jpeg"
-          },
-          {
-            "picture_id": "12536a29-aecd-484c-a8fa-04cd1e75c8ad",
-            "commodity_id": null,
-            "picture_url": "Uploads/1569033010996.jpeg"
-          }
-        ]
-      }
-    ],
+    products: [],
     // 图片大图查看状态
     showStatus: false,
     // 品类列表
-    categories: []
+    categories: [],
+    // 总页数
+    total: 0,
+    // 每页多少条
+    pageSize: 6,
+    // 表格加载状态
+    loading: true,
+    // 条件商品名称
+    commodity_name: '',
+    // 条件商品分类
+    type_id: -1,
+    // 是否点击了搜索按钮
+    isSearchBtn: false,
+    // 当前页
+    pageId: 1
+  }
+
+  /* 
+    删除商品
+  */
+  deleteProduct = (commodity_id) => {
+    Modal.confirm({
+      title: '是否要删除此商品?',
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        const result = await reqDeleteProduct(commodity_id)
+        if (result.flag) {
+          message.success('删除成功')
+          this.getProducts()
+        } else {
+          message.error('删除失败')
+        }
+      }
+    });
+
+  }
+
+  /* 
+    条件搜索
+  */
+  searchProduct = () => {
+    console.log(1)
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log(values)
+        this.setState({
+          commodity_name: values.commodity_name,
+          type_id: values.type_id,
+          isSearchBtn: true
+        })
+
+        this.getProducts(1, values.commodity_name, values.type_id)
+      }
+    })
   }
 
   /*
@@ -68,7 +84,23 @@ export default class Product extends Component {
       showStatus: true
     })
   }
+  /* 
+    获取所有商品列表
+    默认值为第一页， 商品名为空， 类型为空
+  */
+  getProducts = async (pageid = 1, commodity_name = '', type_id = -1) => {
+    const result = await reqProducts(commodity_name, type_id, pageid)
 
+    this.setState({
+      products: result.commoditylist,
+      categories: result.typelist,
+      total: result.commodity_counts,
+      pageSize: result.pagesize,
+      loading: false,
+      pageId: pageid
+    })
+    // 当前页
+  }
   componentWillMount() {
     this.columns = [
       {
@@ -90,12 +122,12 @@ export default class Product extends Component {
       {
         title: '添加时间',
         dataIndex: 'commodity_date',
-        key: 'commodity_date',
+        render: (commodity_date) => dateFormat(commodity_date)
       },
       {
         title: '商品品类',
-        dataIndex: 'type_id',
-        key: 'type_id',
+        dataIndex: 'type_name',
+        key: 'type_name',
       },
       {
         title: '商品图片',
@@ -107,10 +139,10 @@ export default class Product extends Component {
               {
                 pictureList.map(picture => (
                   <img
-                    src="https://f12.baidu.com/it/u=4105282850,1502604217&fm=76"
+                    src={Base_Url + picture.picture_url}
                     alt={picture.picture_id}
-                    key={Math.random()}
-                    onClick={() => this.lookPicture("https://f12.baidu.com/it/u=4105282850,1502604217&fm=76")}
+                    key={picture.picture_id}
+                    onClick={() => this.lookPicture(Base_Url + picture.picture_url)}
                     className="product-img"
                   />
                 ))
@@ -121,62 +153,83 @@ export default class Product extends Component {
       },
       {
         title: '操作',
-        render: () => (
+        render: (product) => (
           <p>
             <Button
               shape="circle"
               icon="edit"
               type="primary"
               style={{ marginRight: 5 }}
+              onClick={() => this.props.history.push('/product/update', product)}
             />
-            <Button shape="circle" icon="delete" type="danger"></Button>
-
+            <Button
+              shape="circle"
+              icon="delete"
+              type="danger"
+              onClick={() => this.deleteProduct(product.commodity_id)}
+            ></Button>
           </p>
         )
       },
     ]
   }
-
-  async componentDidMount() {
-    const result = await reqCategories()
-    console.log(result)
-    if (result.flag) {
-      this.setState({
-        categories: result.typelist
-      })
-    }
+  componentDidMount() {
+    this.getProducts();
   }
 
-  render() {
 
+  render() {
+    const { products, showStatus, pageSize, total, categories, loading, pageId, commodity_name, type_id, isSearchBtn } = this.state
+    const { getFieldDecorator } = this.props.form
     const conditionNodes = (
       <Form
         layout="inline"
       >
         <Item label="分类名称">
-          <Select value="select" style={{ width: 150 }}>
-            <Option key="0" value="select">请选择</Option>
-            <Option key="1" value="phone">手机</Option>
-            <Option key="2" value="ds">电视</Option>
-            <Option key="3" value="sh">手环</Option>
-          </Select>
+          {
+            getFieldDecorator('type_id', {
+              initialValue: '-1'
+            })(
+              <Select style={{ width: 150 }}>
+                <Option key="0" value="-1">请选择</Option>
+                {
+                  categories.map(category => (
+                    <Option
+                      key={category.type_id}
+                      value={category.type_id}
+                    >
+                      {category.type_name}
+                    </Option>
+                  ))
+                }
+
+                <Option key="2" value="ds">电视</Option>
+                <Option key="3" value="sh">手环</Option>
+              </Select>
+            )
+          }
         </Item>
 
         <Item label="手机名称">
-          <Input placeholder="请输入手机名称" />
+          {
+            getFieldDecorator('commodity_name', {
+              initialValue: ''
+            })(
+              <Input placeholder="请输入手机名称" />
+            )
+          }
         </Item>
 
         <Item>
-          <Button icon="search" type="primary" >搜索</Button>
+          <Button icon="search" type="primary" onClick={this.searchProduct}>搜索</Button>
         </Item>
 
       </Form>
     )
     const addNodes = (
-      <Button icon="plus" type="primary">添加</Button>
+      <Button icon="plus" type="primary" onClick={() => this.props.history.push('/product/add')}>添加</Button>
     )
 
-    const { products, showStatus } = this.state
     return (
 
       < Card title={conditionNodes} extra={addNodes} >
@@ -186,6 +239,20 @@ export default class Product extends Component {
           bordered
           size="small"
           rowKey="commodity_id"
+          loading={loading}
+          pagination={{
+            pageSize: pageSize,
+            total: total,
+            current: pageId,
+            onChange: (page) => {
+              if (isSearchBtn) {
+                this.getProducts(page, commodity_name, type_id)
+              } else {
+                this.getProducts(page)
+              }
+
+            },
+          }}
         />
         <Modal
           visible={showStatus}
@@ -198,3 +265,5 @@ export default class Product extends Component {
     )
   }
 }
+
+export default Form.create()(Product)

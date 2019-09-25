@@ -8,11 +8,14 @@ import {
   message
 } from 'antd'
 
+
+axios.defaults.baseURL = 'http://172.28.173.62:8080/mi_mall'
 /* 
   1. 配置请求拦截器，处理 请求参数为 urlencoded 格式
 */
 axios.interceptors.request.use(config => {
-  if (config.method.toUpperCase() === "POST") {
+  console.log(config.url.indexOf('/insert_commodity'));
+  if (config.method.toUpperCase() === "POST" && config.url.indexOf('/insert_commodity') === -1 && config.url.indexOf('/update_commodity') === -1 && config.url.indexOf('/insert_pic') === -1 ) {
 
     const data = config.data;
     // 判断传入的参数是否为对象

@@ -8,8 +8,11 @@ import MenuNav from '../../components/MenuNav/MenuNav'
 import AdminHeader from '../../components/Header/Header'
 import Home from '../Home/Home'
 import Category from '../Category/Category'
-import Product from '../Product/Product'
-import AdminUser from '../AdminUser/AdminUser'
+import ProductHome from '../Product/ProductHome'
+import AdminHome from '../AdminUser/AdminHome'
+import NormalHome from '../NormalUser/NormalHome'
+import Order from '../Order/Order'
+import LoopHome from '../Loop/LoopHome'
 
 const { Footer, Sider, Content } = Layout;
 
@@ -37,8 +40,11 @@ export default class Admin extends Component {
             <Switch>
               <Route path="/home" component={Home}></Route>
               <Route path="/category" component={Category}></Route>
-              <Route path="/product" component={Product}></Route>
-              <Route path="/manager" component={AdminUser}></Route>
+              <Route path="/product" component={ProductHome}></Route>
+              <Route path="/manager" component={AdminHome}></Route>
+              <Route path="/normal" component={NormalHome}></Route>
+              <Route path="/order" component={Order}></Route>
+              <Route path="/loop" component={LoopHome}></Route>
               <Redirect to="/home"></Redirect>
             </Switch>
           </Content>

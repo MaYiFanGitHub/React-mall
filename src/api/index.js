@@ -53,4 +53,82 @@ export const reqAdminUsers = (pageid, user_username, user_phone, role_id) => aja
 /* 
   删除用户
 */
-export const reqDeleteUser = (user_id) => ajax.get('/delete_user', { params: { user_id }})
+export const reqDeleteUser = (user_id) => ajax.get('/delete_user', {
+  params: {
+    user_id
+  }
+})
+/* 
+  添加用户
+*/
+export const reqAddUser = ({
+  user_username,
+  user_password,
+  user_nickname,
+  user_phone,
+  role_id
+}) => ajax.post('/insert_user', {
+  user_username,
+  user_password,
+  user_nickname,
+  user_phone,
+  role_id
+})
+
+/* 
+  获取所有商品列表
+*/
+/* export const reqProducts = ({
+  commodity_name,
+  type_id,
+  pageid
+}) => ajax.post(
+  '/select_commodity', {
+      commodity_name,
+      type_id,
+      pageid
+  }
+
+) */
+
+export const reqProducts = (commodity_name, type_id, pageid) => ajax.get('/select_commodity', {
+  params: {
+    commodity_name,
+    type_id,
+    pageid
+  }
+})
+
+
+
+/* 
+  删除商品
+*/
+export const reqDeleteProduct = (commodity_id) => ajax.get('/delete_commodity', {
+  params: {
+    commodity_id
+  }
+})
+
+/* 
+  查询所有订单
+*/
+export const reqOrders = () => ajax.get('/select_order')
+
+/* 
+  查询所有的轮播图
+*/
+export const reqLoops = () => ajax.get('/select_pic')
+
+/* 
+  添加轮播图
+*/
+export const reqAddLoop = (data) => ajax.post('/insert_pic', data)
+/* 
+  删除轮播图
+*/
+export const reqDeleteLoop = (pic_id) => ajax.get('/delete_pic', {
+  params: {
+    pic_id
+  }
+})
