@@ -23,7 +23,7 @@ class Header extends Component {
       if (item.key === pathname) {
         title = item.title
       } else if (item.children) {
-        const menu = item.children.find(menu => pathname === menu.key)
+        const menu = item.children.find(menu => pathname.includes(menu.key))
         // 判断是否有当前菜单
         if (menu) {
           title = menu.title
